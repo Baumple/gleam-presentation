@@ -13,7 +13,7 @@
     with pkgs;
     {
       devShells.default = mkShell {
-        buildInputs = [ presenterm mermaid-cli ];
+        buildInputs = [ presenterm mermaid-cli pandoc typst ];
       };
     }
   );
