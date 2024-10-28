@@ -66,7 +66,7 @@ Deklarative Programmierung
 - Man beschreibt **was** das Programm mit einer Eingabe macht, aber nicht *wie*
 <!--new_line-->
 <!--new_line-->
-- Geschriebene Programme können oftmals als Theorien formaler, mathematischer
+- Geschriebene Programme können als Theorien formaler, mathematischer
   Logik betrachtet werden
 
 <!--pause-->
@@ -196,20 +196,6 @@ public String otherPureMethod(String s) {
 ```
 
 <!--end_slide-->
-Unreine Funktionen - Beispiele
-============================
-# Beispiel
-```java {1-8|2|4-7|5} +line_numbers
-public class ImpureClass {
-  public int value = 0;
-
-  public int impureMethod(int x) {
-    value = value + 1; // Side-Effect
-    return x + value;
-  }
-}
-```
-<!--end_slide-->
 <!--new_line-->
 
 ![image:width:25%](lucy.png)
@@ -225,7 +211,7 @@ Was ist Gleam?
 - bietet eine simple Syntax 
 - ist einfach zu lernen / nutzen
 - sehr ausdrucksstark und expressiv
-- Typesystem und Compiler unterstützen die Entwicklung
+- Compiler hilft stark bei der Entwicklung
 
 <!--end_slide-->
 Syntax
@@ -467,6 +453,8 @@ fn factorial(x: Int) -> Int {
 Syntax
 ======
 # Listen
+<!--column_layout: [1, 1]-->
+<!--column: 0-->
 ## Gleam
 - mit eckigen Klammern `[]`
 ```rust +line_numbers
@@ -478,6 +466,20 @@ let names = [
 ]
 ```
 
+<!--column: 1-->
+
+## Java
+- Mit der Klasse `ArrayList`
+
+```java +line_numbers
+ArrayList<String> names 
+  = new ArrayList<>();
+names.add("Thomas");
+names.add("Alex");
+names.add("Maurice");
+names.add("Johanna");
+```
+
 <!--end_slide-->
 Syntax
 ======
@@ -486,8 +488,10 @@ Syntax
 ## Gleam
 <!--pause-->
 - es gibt keine For-/While-Schleifen
-- traditionelle Schleifen setzen veraenderbare Variablen voraus
-- stattdessen nutzt man Rekursion
+  -> traditionelle Schleifen setzen veränderbare Variablen voraus
+
+<!--new_line-->
+- man nutzt Rekursion
 
 <!--end_slide-->
 
@@ -495,8 +499,8 @@ Syntax
 ======
 
 # Schleifen
-## Ziel
-- eine Funktion, die uns alle Elemente einer Liste auf die Konsole ausgibt.
+## Beispiel
+- eine Funktion `print_list`, die uns alle Elemente einer Liste auf die Konsole ausgibt.
 ```rust
 pub fn main() {
   let names = [
@@ -559,8 +563,6 @@ Aufgabe
 `fn(String) -> Nil`.
 2. Tausche `io.println` mit `f` aus
 
-- Gleam Tour: [](tour.gleam.run)
-
 ```rust
 fn print_list(name_list: List(String)) {
   case name_list {
@@ -578,7 +580,7 @@ fn print_list(name_list: List(String)) {
 <!--end_slide-->
 Aufgabe
 =======
-# Loesung
+# Lösung
 ```rust
 fn print_list(name_list: List(String), f: fn(String) -> Nil) {
   case name_list {
@@ -657,8 +659,9 @@ pub fn main() {
 
 Listenoperationen
 =================
+# Higher-order Function
 ## Reduce Funktion
-- "reduziert" eine Liste paarweise zu einem Wert einzigen Wert
+- "reduziert" eine Liste zu einem Wert einzigen Wert
 ```rust
 import gleam/list
 
@@ -669,9 +672,367 @@ fn add(a: Int, b: Int) {
 pub fn main() {
   let nums = [ 1, 2, 3, 4 ]
   let reduced = list.reduce(nums, add)
-  io.debug(reduced) // -> 10
+  io.debug(reduced) // -> Ok(10)
 }
 ```
+
+<!--end_slide-->
+
+Eigene Datentypen
+=================
+<!--column_layout: [1, 1]-->
+<!--column: 0-->
+## Gleam (Record)
+- sog. *Algebraische Datentypen*
+```rust +line_numbers
+type SomeType {
+  // Constructor
+  SomeType(field: Int)
+}
+// Typ instanziieren
+fn some_function() {
+  let some_type = SomeType(24)
+}
+```
+
+<!--column: 1-->
+## Java (Class)
+<!--new_line-->
+<!--new_line-->
+
+```java +line_numbers
+public class SomeType {
+  int field;
+
+  // Constructor
+  public SomeType(int value) {
+    this.field = value;
+  }
+}
+```
+
+<!--end_slide-->
+Eigene Datentypen
+=================
+# Ziel: Die Person Erik um ein Jahr altern lassen
+## Gleam (Record)
+```rust +line_numbers
+type Person {
+  Person(name: String, age: Int)
+}
+
+pub fn main() {
+  let erik: Person = Person("Erik", 24)
+
+  io.debug(erik.age) // 24
+}
+```
+<!--end_slide-->
+Eigene Datentypen
+=================
+
+## Gleam (Record)
+```rust {8} +line_numbers
+type Person {
+  Person(name: String, age: Int)
+}
+
+pub fn main() {
+  let erik: Person = Person("Erik", 24)
+
+  erik.age = erik.age + 1
+
+  io.debug(erik.age) // 25?
+}
+```
+<!--pause-->
+> Funktioniert nicht! Variablen sowie Felder von Records sind unveränderlich
+
+<!--end_slide-->
+
+Eigene Datentypen
+=================
+## Gleam (Record) 
+```rust {8-11} +line_numbers
+type Person {
+  Person(name: String, age: Int)
+}
+
+pub fn main() {
+  let erik: Person = Person("Erik", 24)
+
+  let erik: Person = Person(
+    erik.name,
+    erik.age + 1
+  )
+
+  io.debug(erik.age) // -> 25
+}
+```
+- Es muss ein neuer Wert vom Typ `Person` mit den veränderten Feldern erstellt
+  werden
+<!--pause-->
+- Nachteil: Gerade bei komplexen Datenstrukturen kann dies negative Folgen haben
+
+<!--end_slide-->
+
+Eigene Datentypen
+=================
+# Sum Types | Variant Types
+## Gleam
+<!--column_layout: [1, 1]-->
+<!--column: 0-->
+```rust +line_numbers
+type Person {
+  Teacher(name: String)
+  Student(name: String, grade: Int)
+}
+```
+<!--pause-->
+
+```rust +line_numbers
+fn new_teacher() -> Person {
+  Teacher("Hr. Urner")
+}
+
+fn new_student() -> Person {
+  Student("Vincent", 12)
+}
+```
+<!--column: 1-->
+- der Typ `Person` kann in **einer** von 2 *Varianten* auftreten
+  1. Teacher mit einem Namen
+  2. Student mit Namen und Jahrgang
+
+<!--end_slide-->
+
+# Sum Types | Variant Types
+## Gleam 
+```rust +line_numbers
+type Person {
+  Teacher(name: String)
+  Student(name: String, grade: Int)
+}
+
+pub fn main() {
+  let person = Student("Vincent", 12)
+
+  io.println(person.name)
+
+  // 🚨🚨
+  io.debug(person.grade) // <== 💥Fehler!!💥
+  // 🚨🚨
+}
+```
+<!--pause-->
+- Geht nicht, da das Feld "grade" **nur in einer Variante** von Person vorhanden ist
+<!--pause-->
+
+> Ein Feld muss in allen Varianten vorhanden sein, um "direkt darauf zugreifen" zu können
+
+<!--end_slide-->
+
+Eigene Datentypen
+=================
+
+# Sum Types + Pattern Matching
+## Gleam
+
+```rust {1-16|6|7|8|9|10|11|12|7-14} +line_numbers
+type Person {
+  Teacher(name: String)
+  Student(name: String, grade: Int)
+}
+
+fn print_person(person: Person) {
+  case person {
+    Teacher(name) -> io.println(name)
+    Student(name, grade) -> {
+      io.println(name)
+      let grade = int.to_string(grade)
+      io.println(name)
+    }
+  }
+}
+```
+
+<!--end_slide-->
+Sum Types in action
+===================
+<!--column_layout: [1, 1]-->
+<!--column: 0-->
+## Gleam
+```rust
+fn divide(x: Int, y: Int) -> Int {
+  x / y
+}
+```
+<!--column: 1-->
+## Java
+```java
+public int divide(int x, int y) {
+  return x / y;
+}
+```
+<!--reset_layout-->
+
+### Welche Probleme könnten auftreten?
+<!--pause-->
+- kein Schutz gegen den Fall `y = 0`
+  - Java: `ArithmeticPointerException` 💥 -> `int -> int` gelogen
+  - Gleam: Division mit 0 ist definiert als 0
+
+<!--end_slide-->
+
+Sum Types in action
+===================
+# Mögliche Lösungen
+
+```rust +line_numbers
+fn divide(x: Int, y: Int) -> Int {
+  x / y
+}
+```
+
+## Gleam
+- Datentyp des Funktionsparameters `y` ändern
+```rust
+fn divide(x: Int, y: NonZeroInt) -> Int {
+  // ...
+}
+```
+<!--end_slide-->
+
+# Mögliche Lösung
+## Gleam
+```rust
+fn divide(x: Int, y: Int) -> MagicType {
+  // ...
+}
+
+```
+<!--pause-->
+<!--new_line-->
+- Ein Datentyp, der entweder einen Wert hat (Division erfolgreich)
+  **oder** `Undefiniert` ist
+
+<!--column_layout: [1, 1]-->
+<!--column: 0-->
+```rust +line_numbers
+type MaybeNumber {
+  SomeNumber(Int) // Es gibt ein Ergebnis
+  Undefined       // Es gibt kein Ergebnis
+}
+```
+<!--column: 1-->
+<!--new_line-->
+- der Typ `MaybeNumber` ist entweder `SomeNumber` **oder** Undefiniert
+
+<!--reset_layout-->
+<!--end_slide-->
+# Lösung
+## Gleam
+```rust {1-11|7|8|9} +line_numbers
+type MaybeNumber {
+  SomeNumber(Int) // Es gibt ein Ergebnis
+  Undefined       // Es gibt kein Ergebnis
+}
+
+fn divide(x: Int, y: Int) -> MaybeNumber {
+  case y {
+    0 -> Undefined // 👎
+    y -> SomeNumber(x / y) // 👍
+  }
+}
+```
+<!--end_slide-->
+# Lösung
+## Gleam
+
+```rust {1-15|5|7|8|9-10|13|1-15} +line_numbers
+import gleam/int
+import gleam/io
+
+pub fn main() {
+  let result: MaybeNumber = divide(42, 0)
+
+  case result {
+    SomeNumber(value) -> {
+      let value = int.to_string(value)
+      io.println(value)
+    }
+
+    Undefined -> io.println("💥")
+  }
+}
+```
+
+<!--end_slide-->
+Option-Type
+===========
+```rust
+pub type Option(a) {
+  Some(a)
+  None
+} 
+```
+----
+<!--column_layout: [1, 1]-->
+<!--column: 0-->
+- nahezu in jeder funktionalen Sprache vorhanden
+- wird teils auch von imperativen Sprachen umgesetzt
+- keine `NullpointerException`
+
+<!--column: 1-->
+<!--pause-->
+
+# Haskell (whitepaper language)
+```haskell
+data Maybe a = Nothing | Just a
+```
+<!--pause-->
+# Rust
+```rust
+pub enum Option<T> {
+  Some(T),
+  None,
+}
+```
+<!--reset_layout-->
+
+<!--end_slide-->
+
+Result-Type
+===========
+<!--column_layout: [1, 1]-->
+<!--column: 0-->
+## Gleam
+```rust {9|10-17}
+import gleam/io
+
+pub type Result(a, b) {
+  Ok(a)
+  Error(b)
+}
+
+pub fn main() {
+  let res: Result(Int, String) = Ok(2)
+  case res {
+    Ok(value) -> {
+      // ..
+    }
+    Error(message) -> {
+      // ..
+    }
+  }
+}
+```
+<!--column: 1-->
+**Varianten**
+1. `Ok`    -> Erfolgreiches Ergebnis: Variante beinhaltet Ergebnis
+2. `Error` -> Ein Fehler ist aufgetreten: Variante beinhaltet `Fehlernachricht`
+
+<!--reset_layout-->
 
 <!--end_slide-->
 <!--jump_to_middle-->
