@@ -1,6 +1,6 @@
 ---
 title: Die Programmiersprache Gleam
-sub_title: Konzepte des funktionalen Programmierparadigma
+sub_title: Konzepte der funktionalen Programmierung
 author: Linus Ziegler
 ---
 
@@ -11,15 +11,17 @@ Inhalt
 1. Imperativ vs Deklarativ
 2. Funktionale Programmierung
 3. Die Programmiersprache Gleam
+    - Syntax: Zuweisungen, Funktionsdefinition, etc.
+    - Listen Operationen
+    - Sum Types
 <!--incremental_lists: false-->
-
 
 <!-- end_slide -->
 
 
 <!--jump_to_middle-->
-Funktionale Programmierung
-=====================
+Imperativ vs. Deklarativ
+========================
 
 <!--end_slide-->
 
@@ -214,7 +216,7 @@ Was ist Gleam?
 - Compiler hilft stark bei der Entwicklung
 
 <!--end_slide-->
-Syntax
+Syntax - Zuweisung
 ======
 # Zuweisungen
 <!--column_layout: [1,1]-->
@@ -245,7 +247,7 @@ String stringValue = "Hello";
 ```
 
 <!--end_slide-->
-Syntax
+Syntax - Zuweisung
 ======
 # Zuweisung
 <!--column_layout: [1, 1]-->
@@ -269,7 +271,7 @@ var stringValue = "Hello";
 <!--end_slide-->
 
 
-Syntax
+Syntax - Funktionsdefinition
 ======
 # Funktionsdefinition
 <!--column_layout: [1, 1]-->
@@ -301,7 +303,7 @@ public class SomeClass {
 
 <!--end_slide-->
 
-Syntax
+Syntax - Controlflow
 ================
 # Controlflow
 
@@ -340,7 +342,7 @@ public boolean negate(boolean value) {
 
 <!--end_slide-->
 
-Syntax
+Syntax - Controlflow
 ================
 # Controlflow
 - mit dem `case` Keyword
@@ -357,7 +359,7 @@ fn negate(value: Bool) {
 
 <!--end_slide-->
 
-Syntax
+Syntax - Controlflow
 ================
 
 # Controlflow
@@ -438,7 +440,8 @@ fn name(value: Int) -> Int {
 ```
 
 <!--end_slide-->
-Aufgabe
+Aufgabe - Funktionsdefinition und Case-Expression
+=======
 # Lösung
 ```rust {1-6|1|2|3|4|2-5} +line_numbers
 fn factorial(x: Int) -> Int {
@@ -450,7 +453,7 @@ fn factorial(x: Int) -> Int {
 ```
 
 <!--end_slide-->
-Syntax
+Syntax - Listen
 ======
 # Listen
 <!--column_layout: [1, 1]-->
@@ -458,7 +461,7 @@ Syntax
 ## Gleam
 - mit eckigen Klammern `[]`
 ```rust +line_numbers
-let names = [
+let names: List(String) = [
   "Thomas",
   "Alex",
   "Maurice",
@@ -481,7 +484,7 @@ names.add("Johanna");
 ```
 
 <!--end_slide-->
-Syntax
+Syntax - "Schleifen"
 ======
 
 # Schleifen
@@ -495,7 +498,7 @@ Syntax
 
 <!--end_slide-->
 
-Syntax
+Syntax - "Schleifen"
 ======
 
 # Schleifen
@@ -515,7 +518,7 @@ pub fn main() {
 
 <!--end_slide-->
 
-Syntax
+Syntax - Pattern Matching
 ======
 
 # Rekursion + *Pattern Matching*
@@ -805,6 +808,8 @@ fn new_student() -> Person {
   2. Student mit Namen und Jahrgang
 
 <!--end_slide-->
+Eigene Datentypen
+=================
 
 # Sum Types | Variant Types
 ## Gleam 
@@ -857,7 +862,7 @@ fn print_person(person: Person) {
 ```
 
 <!--end_slide-->
-Sum Types in action
+Sum Types in der Praxis
 ===================
 <!--column_layout: [1, 1]-->
 <!--column: 0-->
@@ -884,7 +889,7 @@ public int divide(int x, int y) {
 
 <!--end_slide-->
 
-Sum Types in action
+Sum Types in der Praxis
 ===================
 # Mögliche Lösungen
 
@@ -902,7 +907,8 @@ fn divide(x: Int, y: NonZeroInt) -> Int {
 }
 ```
 <!--end_slide-->
-
+Sum Types in der Praxis
+=======
 # Mögliche Lösung
 ## Gleam
 ```rust
@@ -930,6 +936,9 @@ type MaybeNumber {
 
 <!--reset_layout-->
 <!--end_slide-->
+Sum Types in der Praxis
+=======================
+
 # Lösung
 ## Gleam
 ```rust {1-11|7|8|9} +line_numbers
@@ -946,6 +955,9 @@ fn divide(x: Int, y: Int) -> MaybeNumber {
 }
 ```
 <!--end_slide-->
+Sum Types in der Praxis
+=======================
+
 # Lösung
 ## Gleam
 

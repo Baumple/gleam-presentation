@@ -1,1 +1,1 @@
-presenterm slides.md --image-protocol sixel
+presenterm slides.md --image-protocol sixel --theme terminal-dark
